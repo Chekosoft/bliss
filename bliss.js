@@ -259,6 +259,7 @@ extend($, {
 		o.data = o.data || '';
 		o.method = o.method || 'GET';
 		o.headers = o.headers || {};
+		o.xhrOnFail = o.xhrOnFail || false;
 
 		var xhr = new XMLHttpRequest();
 
@@ -302,7 +303,13 @@ extend($, {
 					resolve(xhr);
 				}
 				else {
-					reject(Error(xhr.statusText));
+					if(o.xhrOnFail) {
+						//xhrOnFail is on, we want the xhr.
+						reject(xhr);
+					} else {
+						//Default behaviour.
+						reject(Error(xhr.statusText));
+					}
 				}
 
 			};
@@ -464,7 +471,7 @@ $.setProps = {
 				events.forEach(function(event){
 					me.removeEventListener(event, once);
 				});
-				
+
 				return callback.apply(me, arguments);
 			};
 
